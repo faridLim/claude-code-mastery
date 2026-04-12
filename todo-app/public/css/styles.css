@@ -1,0 +1,339 @@
+/* Todo App 커스텀 스타일 (Tailwind CSS 보완) */
+
+/* 배경 그라데이션 */
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* 카드/섹션 스타일 */
+.bg-white {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* 필터 버튼 스타일 */
+.filter-btn {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.filter-btn.active:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.5);
+}
+
+/* Todo 항목 카드 스타일 */
+.bucket-item {
+  animation: slideIn 0.3s ease-out;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.bucket-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 1);
+}
+
+/* 애니메이션 */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 완료된 항목 스타일 */
+.bucket-item .line-through {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* 체크박스 호버 효과 */
+.bucket-item button:first-child:hover {
+  transform: scale(1.15);
+}
+
+/* 우선순위 배지 */
+.priority-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.priority-high {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.priority-medium {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.priority-low {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+/* 반복 주기 배지 */
+.recurrence-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* 카테고리 배지 */
+.category-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* 입력 필드 */
+input[type="text"],
+input[type="color"],
+select {
+  transition: all 0.3s ease;
+  border: 2px solid #e5e7eb;
+}
+
+input[type="text"]:hover,
+select:hover {
+  border-color: #d1d5db;
+}
+
+input[type="text"]:focus,
+select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+/* 버튼 */
+button[type="submit"] {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* 수정/삭제 버튼 */
+.bucket-item button {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.bucket-item button:not(:first-child):hover {
+  transform: translateY(-1px);
+}
+
+.bucket-item .text-blue-600:hover {
+  color: #2563eb !important;
+}
+
+.bucket-item .text-red-600:hover {
+  color: #dc2626 !important;
+}
+
+/* 모달 */
+#editModal,
+#categoryModal {
+  animation: fadeIn 0.2s ease-in;
+}
+
+#editModal > div,
+#categoryModal > div {
+  animation: scaleIn 0.2s ease-out;
+}
+
+#editModal button:hover,
+#categoryModal button:hover {
+  transform: translateY(-1px);
+  transition: all 0.3s ease;
+}
+
+#editModal button[type="submit"]:hover,
+#categoryModal button[type="submit"]:hover {
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+#editModal button[type="button"]:hover,
+#categoryModal button[type="button"]:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 헤더 스타일 */
+header h1 {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.5));
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 빈 상태 메시지 */
+#emptyState {
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 640px) {
+  .bucket-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bucket-item > div:nth-child(2) {
+    width: 100%;
+  }
+
+  .bucket-item > div:last-child {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .filter-btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(135deg, #1a202c 0%, #2d1b4e 50%, #3d1f4d 100%);
+  }
+
+  .bg-white {
+    background: rgba(45, 46, 66, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .bucket-item {
+    background: rgba(45, 46, 66, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .text-gray-800 {
+    color: #f3f4f6;
+  }
+
+  .text-gray-600 {
+    color: #d1d5db;
+  }
+
+  .text-gray-400 {
+    color: #9ca3af;
+  }
+
+  .border-gray-300 {
+    border-color: #4b5563;
+  }
+
+  input[type="text"],
+  select {
+    background-color: #374151;
+    color: #f3f4f6;
+    border-color: #4b5563;
+  }
+
+  input[type="text"]:focus,
+  select:focus {
+    border-color: #667eea;
+  }
+
+  .filter-btn {
+    background-color: #4b5563;
+    color: #d1d5db;
+  }
+
+  .filter-btn:hover {
+    background-color: #5a6574;
+  }
+}

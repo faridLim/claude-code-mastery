@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>계산기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .calculator {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 320px;
+            padding: 20px;
+        }
+
+        .display {
+            background: #222;
+            color: #fff;
+            font-size: 2.5em;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: right;
+            margin-bottom: 20px;
+            word-wrap: break-word;
+            word-break: break-all;
+            min-height: 60px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .number {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .number:hover {
+            background: #e0e0e0;
+        }
+
+        .operator {
+            background: #667eea;
+            color: white;
+        }
+
+        .operator:hover {
+            background: #5568d3;
+        }
+
+        .equal {
+            background: #48bb78;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .equal:hover {
+            background: #38a169;
+        }
+
+        .clear {
+            background: #f56565;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .clear:hover {
+            background: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <!-- 계산기 컨테이너 -->
+    <div class="calculator">
+        <!-- 계산기 디스플레이 -->
+        <div class="display" id="display">0</div>
+
+        <!-- 계산기 버튼들 -->
+        <div class="buttons">
+            <!-- 첫 줄: 초기화 버튼 (2칸 차지), 나누기 버튼, 곱하기 버튼 -->
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="operator" onclick="appendOperator('/')">÷</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+
+            <!-- 두 번째 줄: 숫자 7, 8, 9, 빼기 -->
+            <button class="number" onclick="appendNumber('7')">7</button>
+            <button class="number" onclick="appendNumber('8')">8</button>
+            <button class="number" onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('-')">−</button>
+
+            <!-- 세 번째 줄: 숫자 4, 5, 6, 더하기 -->
+            <button class="number" onclick="appendNumber('4')">4</button>
+            <button class="number" onclick="appendNumber('5')">5</button>
+            <button class="number" onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+
+            <!-- 네 번째 줄: 숫자 1, 2, 3, 소수점 -->
+            <button class="number" onclick="appendNumber('1')">1</button>
+            <button class="number" onclick="appendNumber('2')">2</button>
+            <button class="number" onclick="appendNumber('3')">3</button>
+            <button class="number" onclick="appendNumber('.')">.</button>
+
+            <!-- 다섯 번째 줄: 숫자 0 (2칸 차지), 등호 (2칸 차지) -->
+            <button class="number" onclick="appendNumber('0')" style="grid-column: span 2;">0</button>
+            <button class="equal" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        // 현재 입력값을 저장하는 변수
+        let display = document.getElementById('display');
+        let currentInput = '0';     // 현재 입력 중인 숫자
+        let previousInput = '';     // 이전에 입력된 숫자
+        let operator = '';          // 현재 선택된 연산자
+        let shouldResetDisplay = false; // 다음 숫자를 입력할 때 디스플레이를 초기화할지 여부
+
+        /**
+         * 숫자를 입력하는 함수
+         * @param {string} number - 입력한 숫자 또는 소수점
+         */
+        function appendNumber(number) {
+            // 숫자 입력 후 다음 연산자를 누르면 디스플레이가 초기화되어야 하므로 체크
+            if (shouldResetDisplay) {
+                currentInput = number;
+                shouldResetDisplay = false;
+            } else {
+                // 0에서 시작하는 경우, 새로운 숫자로 대체 (0.5 같은 경우는 예외)
+                if (currentInput === '0' && number !== '.') {
+                    currentInput = number;
+                } else if (number === '.' && currentInput.includes('.')) {
+                    // 이미 소수점이 있으면 추가하지 않음
+                    return;
+                } else {
+                    currentInput += number;
+                }
+            }
+            updateDisplay();
+        }
+
+        /**
+         * 연산자를 선택하는 함수
+         * @param {string} op - 선택한 연산자 (+, -, *, /)
+         */
+        function appendOperator(op) {
+            // 이미 연산자가 선택되어 있고 새로운 숫자가 입력되지 않았으면, 연산자만 변경
+            if (operator !== '' && !shouldResetDisplay) {
+                calculate();
+            }
+
+            previousInput = currentInput;
+            operator = op;
+            shouldResetDisplay = true;
+        }
+
+        /**
+         * 계산을 수행하는 함수
+         */
+        function calculate() {
+            // 연산자가 선택되지 않았으면 계산하지 않음
+            if (operator === '' || previousInput === '') {
+                return;
+            }
+
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+
+            // 선택된 연산자에 따라 계산 수행
+            switch (operator) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    // 0으로 나누는 것을 방지
+                    if (current === 0) {
+                        currentInput = '오류: 0으로 나눌 수 없습니다';
+                        updateDisplay();
+                        resetCalculator();
+                        return;
+                    }
+                    result = prev / current;
+                    break;
+            }
+
+            // 소수점 이하가 많으면 반올림
+            currentInput = parseFloat(result.toFixed(10)).toString();
+            operator = '';
+            previousInput = '';
+            shouldResetDisplay = true;
+            updateDisplay();
+        }
+
+        /**
+         * 디스플레이를 초기화하는 함수
+         */
+        function clearDisplay() {
+            resetCalculator();
+            updateDisplay();
+        }
+
+        /**
+         * 계산기의 모든 값을 초기화하는 헬퍼 함수
+         */
+        function resetCalculator() {
+            currentInput = '0';
+            previousInput = '';
+            operator = '';
+            shouldResetDisplay = false;
+        }
+
+        /**
+         * 디스플레이 업데이트 함수
+         * currentInput의 값을 화면에 표시
+         */
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+    </script>
+</body>
+</html>

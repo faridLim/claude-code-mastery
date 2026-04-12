@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="min-h-screen py-12">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <!-- 헤더 -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-white mb-2">✓ 나의 Todo</h1>
+            <p class="text-gray-100">효율적으로 할 일을 관리하세요</p>
+        </header>
+
+        <!-- 통계 -->
+        <div class="bg-white rounded-xl p-8 mb-8">
+            <div class="grid grid-cols-4 gap-4 text-center">
+                <div>
+                    <p class="text-3xl font-bold text-blue-600" id="totalCount">0</p>
+                    <p class="text-gray-600 text-sm mt-1">전체</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-green-600" id="completedCount">0</p>
+                    <p class="text-gray-600 text-sm mt-1">완료</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-orange-600" id="progressCount">0</p>
+                    <p class="text-gray-600 text-sm mt-1">진행중</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-purple-600" id="completionRate">0%</p>
+                    <p class="text-gray-600 text-sm mt-1">달성률</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 입력 폼 -->
+        <div class="bg-white rounded-xl p-8 mb-8">
+            <form id="todoForm" class="space-y-4">
+                <input
+                    type="text"
+                    id="todoInput"
+                    placeholder="새로운 Todo를 입력하세요..."
+                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                >
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <select
+                        id="prioritySelect"
+                        class="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="low">우선순위: 낮음</option>
+                        <option value="medium" selected>우선순위: 중간</option>
+                        <option value="high">우선순위: 높음</option>
+                    </select>
+                    <select
+                        id="categorySelect"
+                        class="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">카테고리 선택 안함</option>
+                    </select>
+                    <select
+                        id="recurrenceSelect"
+                        class="px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="none" selected>반복: 없음</option>
+                        <option value="daily">매일</option>
+                        <option value="weekly">매주</option>
+                        <option value="monthly">매월</option>
+                    </select>
+                </div>
+                <div class="flex gap-3">
+                    <button
+                        type="submit"
+                        class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium"
+                    >
+                        추가
+                    </button>
+                    <button
+                        type="button"
+                        id="openCategoryModal"
+                        class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all font-medium"
+                    >
+                        카테고리 관리
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 필터 -->
+        <div class="bg-white rounded-xl p-6 mb-8">
+            <div class="space-y-4">
+                <!-- 상태 필터 -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-600 mb-2">상태</p>
+                    <div class="flex gap-3 flex-wrap">
+                        <button
+                            class="filter-btn px-6 py-2 rounded-lg font-medium transition-all active"
+                            data-filter="all"
+                        >
+                            전체
+                        </button>
+                        <button
+                            class="filter-btn px-6 py-2 rounded-lg font-medium transition-all"
+                            data-filter="active"
+                        >
+                            진행중
+                        </button>
+                        <button
+                            class="filter-btn px-6 py-2 rounded-lg font-medium transition-all"
+                            data-filter="completed"
+                        >
+                            완료
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 우선순위 필터 -->
+                <div>
+                    <p class="text-sm font-semibold text-gray-600 mb-2">우선순위</p>
+                    <div class="flex gap-3 flex-wrap">
+                        <button
+                            class="filter-btn px-6 py-2 rounded-lg font-medium transition-all"
+                            data-priority="high"
+                        >
+                            높음
+                        </button>
+                        <button
+                            class="filter-btn px-6 py-2 rounded-lg font-medium transition-all"
+                            data-priority="medium"
+                        >
+                            중간
+                        </button>
+                        <button
+                            class="filter-btn px-6 py-2 rounded-lg font-medium transition-all"
+                            data-priority="low"
+                        >
+                            낮음
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 카테고리 필터 -->
+                <div id="categoryFilterContainer">
+                    <p class="text-sm font-semibold text-gray-600 mb-2">카테고리</p>
+                    <div id="categoryFilters" class="flex gap-3 flex-wrap">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Todo 리스트 -->
+        <div id="todoListContainer" class="space-y-4">
+            <!-- 동적으로 생성됨 -->
+        </div>
+
+        <!-- 빈 상태 메시지 -->
+        <div id="emptyState" class="text-center py-12 hidden">
+            <p class="text-gray-100 text-lg">아직 Todo가 없습니다.</p>
+            <p class="text-gray-100">위에서 새로운 Todo를 추가해보세요!</p>
+        </div>
+    </div>
+
+    <!-- 수정 모달 -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h3 class="text-2xl font-bold mb-6">Todo 수정</h3>
+            <form id="editForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">제목</label>
+                    <input
+                        type="text"
+                        id="editTitle"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">우선순위</label>
+                    <select
+                        id="editPriority"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="low">낮음</option>
+                        <option value="medium">중간</option>
+                        <option value="high">높음</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">카테고리</label>
+                    <select
+                        id="editCategory"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">선택 안함</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">반복</label>
+                    <select
+                        id="editRecurrence"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="none">없음</option>
+                        <option value="daily">매일</option>
+                        <option value="weekly">매주</option>
+                        <option value="monthly">매월</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 justify-end pt-4">
+                    <button
+                        type="button"
+                        id="cancelEdit"
+                        class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all font-medium"
+                    >
+                        취소
+                    </button>
+                    <button
+                        type="submit"
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium"
+                    >
+                        저장
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 카테고리 관리 모달 -->
+    <div id="categoryModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h3 class="text-2xl font-bold mb-6">카테고리 추가</h3>
+            <form id="categoryForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">카테고리 이름</label>
+                    <input
+                        type="text"
+                        id="categoryName"
+                        placeholder="예: 업무, 개인, 학습"
+                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">색상</label>
+                    <input
+                        type="color"
+                        id="categoryColor"
+                        value="#667eea"
+                        class="w-full h-12 border-2 border-gray-300 rounded-lg cursor-pointer"
+                    >
+                </div>
+                <div class="flex gap-3 justify-end pt-4">
+                    <button
+                        type="button"
+                        id="cancelCategory"
+                        class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all font-medium"
+                    >
+                        취소
+                    </button>
+                    <button
+                        type="submit"
+                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium"
+                    >
+                        추가
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/api.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(killall Cursor)",
+      "Bash(git config:*)"
+    ]
+  },
+  "outputStyle": "Beginner Friendly",
+  "plansDirectory": ".claude/plans/"
+}
