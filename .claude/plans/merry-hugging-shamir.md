@@ -1,4 +1,4 @@
-# 계획: Todo App UI 전면 재설계
+# 계획: Todo App UI 전면 재설계용
 
 ## Context
 현재 UI는 보라색 그라데이션 배경에 단순 리스트 형태로, 사용자가 제공한 참고 이미지(HealDocs 스타일)처럼
